@@ -7,6 +7,7 @@ from typewrit.utils import config
 _completions = pipeline(
     task='text-generation',
     model=config.llm.completion_model,
+    device_map=config.llm.device_map,
 )
 
 
