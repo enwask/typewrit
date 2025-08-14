@@ -6,7 +6,7 @@ from inspect import get_annotations
 
 class LLMConfig(NamedTuple):
     # The model to use for LLM completion
-    completion_model: str = "openai/gpt-oss-20b"
+    completion_model: str = "openai-community/gpt2"
 
     # The device map to use with the completion model
     device_map: str = "auto"
