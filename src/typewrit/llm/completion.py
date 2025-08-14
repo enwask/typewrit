@@ -21,7 +21,14 @@ class Completion:
 
     def __init__(self, prompt: str, text: str):
         self.prompt_text = prompt
-        self.completed_text = text
+        self.completed_text = self._postprocess_completion(prompt, text)
+
+    def _postprocess_completion(self, prompt: str, text: str) -> str:
+        text = text.strip().replace('\n', ' ')
+        while '  ' in text:
+            text = text.replace('  ', ' ')
+
+        return text
 
     @cached_property
     def prefix(self) -> str:
@@ -31,7 +38,8 @@ class Completion:
         the last word, the prefix will not include part of that word.
         """
         common_len = 0
-        while self.prompt_text[:common_len] \
+        while common_len < len(self.prompt_text) \
+                and self.prompt_text[:common_len] \
                 == self.completed_text[:common_len]:
             common_len += 1
 
@@ -60,7 +68,8 @@ class Completion:
         common_len = len(self.prefix)
         assert common_len < len(self.completed_text)
 
-        left = right = common_len + 1
+        left = common_len + int(self.completed_text[common_len] == ' ')
+        right = common_len + 1
         while right < len(self.completed_text) \
                 and self.completed_text[right] != ' ':
             right += 1
@@ -73,7 +82,12 @@ class Completion:
         The suffix of the completion, which is the part that follows
         the pivot point.
         """
-        suffix_start = len(self.prefix) + 2 + len(self.pivot)  # +2 for spaces
+        suffix_start = len(self.prefix) + len(self.pivot) \
+            + int(self.completed_text[len(self.prefix)] == ' ')
+        if suffix_start < len(self.completed_text) \
+           and self.completed_text[suffix_start] == ' ':
+            suffix_start += 1
+
         return self.completed_text[suffix_start:]
 
     def __str__(self) -> str:
@@ -82,7 +96,7 @@ class Completion:
 
 def get_completions(
         prompt: str,
-        max_new_tokens: int = 20,
+        max_new_tokens: int = 50,
         num_return_sequences: int = 3
 ) -> list[Completion]:
     return [
