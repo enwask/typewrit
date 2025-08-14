@@ -35,9 +35,14 @@ class Completion:
                 == self.completed_text[:common_len]:
             common_len += 1
 
+        # If no words differed, go back a word for the pivot
+        if common_len == len(self.prompt_text):
+            common_len -= 1
+            while common_len > 0 and self.prompt_text[common_len] != ' ':
+                common_len -= 1
+
         # Check if we are within a word
-        within_word = common_len < len(self.prompt_text) \
-            and self.prompt_text[common_len] != ' '
+        within_word = self.prompt_text[common_len] != ' '
 
         if within_word:
             while common_len > 0 and self.prompt_text[common_len] != ' ':
