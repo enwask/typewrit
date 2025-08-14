@@ -72,7 +72,7 @@ class Completion:
         return self.completed_text[suffix_start:]
 
     def __str__(self) -> str:
-        return f"{self.prefix} {self.pivot} {self.suffix}".strip()
+        return f"{self.prefix}|{self.pivot}|{self.suffix}".strip()
 
 
 def get_completions(

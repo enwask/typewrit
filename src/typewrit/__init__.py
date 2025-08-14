@@ -7,4 +7,4 @@ if __name__ == "typewrit":
             inp = input("> ")
             if inp.lower() in {'exit', 'quit', 'q'}:
                 break
-            print(get_completions(inp))
+            print(list(map(str, get_completions(inp))))
